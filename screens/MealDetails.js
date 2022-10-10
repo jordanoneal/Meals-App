@@ -9,10 +9,9 @@ import IconButton from '../components/IconButton';
 
 export default function MealDetails() {
     const route = useRoute();
-    const mealId = route.params.mealId;
-
     const navigation = useNavigation();
 
+    const mealId = route.params.mealId;
     const selectedMeal = MEALS.find((el) => el.id === mealId)
 
     const headerButtonPressHandler = () => {
@@ -20,10 +19,12 @@ export default function MealDetails() {
     }
 
     useLayoutEffect(() => {
+        const mealTitle = selectedMeal.title
         navigation.setOptions({
             headerRight: () => {
                 return <IconButton icon='star' color='#ffffff' onPress={headerButtonPressHandler} />
-            }
+            },
+            title: mealTitle
         })
     }, [navigation, headerButtonPressHandler])
 
