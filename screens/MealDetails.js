@@ -7,31 +7,40 @@ import Subtitle from '../components/MealDetail/Subtitle';
 import List from '../components/MealDetail/List';
 import IconButton from '../components/IconButton';
 import { FavoritesContext } from '../store/context/favorites-context';
+import { useSelector, useDispatch } from 'react-redux'
+import { addFavorite, removeFavorite } from '../store/redux/favorites';
 
 export default function MealDetails() {
     const route = useRoute();
     const navigation = useNavigation();
-    const favoritesContext = useContext(FavoritesContext);
 
-    const mealId = route.params.mealId;
-    const selectedMeal = MEALS.find((el) => el.id === mealId)
+    // const favoritesContext = useContext(FavoritesContext);
+
+    const dispatch = useDispatch();
+    const favoriteIds = useSelector((state) => state.favoriteMeals.ids)
+
+    const selectedMealId = route.params.mealId;
+    const selectedMeal = MEALS.find((el) => el.id === selectedMealId)
+
+    // const isFavorite = favoritesContext.ids.includes(selectedMealId);
+    const isFavorite = favoriteIds.includes(selectedMealId);
 
     const changeFavoritesHandler = () => {
-        if (mealIsFavorite) {
-            favoritesContext.removeFavorite(mealId);
-            return;
+        if (isFavorite) {
+            // favoritesContext.removeFavorite(selectedMealId);
+            dispatch(removeFavorite({ id: selectedMealId }));
         }
-        console.log('Added to favorites')
-        favoritesContext.addFavorite(mealId);
+        else {
+            // favoritesContext.addFavorite(selectedMealId);
+            dispatch(addFavorite({ id: selectedMealId }));
+        }
     }
-
-    const mealIsFavorite = favoritesContext.ids.includes(mealId);
 
     useLayoutEffect(() => {
         const mealTitle = selectedMeal.title
         navigation.setOptions({
             headerRight: () => {
-                return <IconButton icon={mealIsFavorite ? 'star' : 'star-outline'} color='#ffffff' onPress={changeFavoritesHandler} />
+                return <IconButton icon={isFavorite ? 'star' : 'star-outline'} color='#ffffff' onPress={changeFavoritesHandler} />
             },
             title: mealTitle
         })
